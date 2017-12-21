@@ -18,6 +18,9 @@ import com.example.savvycom.exercisesavvycom2.data.remote.Client;
 import com.example.savvycom.exercisesavvycom2.data.remote.LoadAllAlbums;
 import com.example.savvycom.exercisesavvycom2.ui.adapter.AlbumAdapter;
 import com.example.savvycom.exercisesavvycom2.utils.OnLoadMoreListener;
+import com.example.savvycom.exercisesavvycom2.utils.ScreenManager;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 
@@ -43,11 +46,26 @@ public class FragmentAlbum extends Fragment {
         init(view);
         fetchData(numberID);
         rvAlbums.setLayoutManager(new LinearLayoutManager(getActivity()));
-        adapter = new AlbumAdapter(rvAlbums, albums, getActivity());
+        adapter = new AlbumAdapter(rvAlbums, albums, getActivity(), mOnItemClickListener);
         rvAlbums.setAdapter(adapter);
         setupUI();
         return view;
     }
+
+    private AlbumAdapter.OnItemClickListener mOnItemClickListener = new AlbumAdapter.OnItemClickListener() {
+        @Override
+        public void OnItemClick(View view, int position) {
+            Album longClickItem = albums.get(position);
+            FragmentAlbumDetails mFragment = new FragmentAlbumDetails();
+            ScreenManager.openFragment(getFragmentManager(),mFragment,R.id.relative_layout);
+            EventBus.getDefault().postSticky(longClickItem);
+        }
+
+        @Override
+        public void OnLongClick(View view, int position) {
+
+        }
+    };
 
     private void setupUI() {
         adapter.setOnLoadMoreListener(new OnLoadMoreListener() {

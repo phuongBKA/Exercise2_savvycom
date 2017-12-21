@@ -6,9 +6,9 @@ import android.os.Bundle;
 
 import com.example.savvycom.exercisesavvycom2.R;
 import com.example.savvycom.exercisesavvycom2.ui.fragment.FragmentAlbum;
+import com.example.savvycom.exercisesavvycom2.utils.ScreenManager;
 
 public class MainActivity extends AppCompatActivity {
-    final String DISPLAY_FRAGMENT_ALBUM = "fragment_album";
     FragmentManager fragmentManager;
 
     @Override
@@ -27,8 +27,6 @@ public class MainActivity extends AppCompatActivity {
     private void displayAlbumFragment(){
         FragmentAlbum fragmentAlbum = new FragmentAlbum();
 
-        fragmentManager.beginTransaction()
-                .add(R.id.relative_layout, fragmentAlbum, DISPLAY_FRAGMENT_ALBUM)
-                .addToBackStack(DISPLAY_FRAGMENT_ALBUM).commit();
+        ScreenManager.openFragment(getFragmentManager(),fragmentAlbum,R.id.relative_layout);
     }
 }

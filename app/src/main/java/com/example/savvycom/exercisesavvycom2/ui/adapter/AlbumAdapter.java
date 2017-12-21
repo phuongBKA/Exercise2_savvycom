@@ -1,6 +1,7 @@
 package com.example.savvycom.exercisesavvycom2.ui.adapter;
 
 import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final int VIEW_TYPE_ITEM = 0;
     private final int VIEW_TYPE_LOADING = 1;
-
+    private OnItemClickListener onItemClickListener;
     private ArrayList<Album> albumsList;
     private Context context;
 
@@ -33,10 +34,17 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private int lastVisibleItem, totalItemCount;
     private final static String TAG = "adapter";
 
+    public interface OnItemClickListener{
+        void OnItemClick(View view, int position);
 
-    public AlbumAdapter(RecyclerView recyclerView, ArrayList<Album> albums, Context context) {
+        void OnLongClick(View view, int position);
+    }
+
+
+    public AlbumAdapter(RecyclerView recyclerView, ArrayList<Album> albums, Context context, OnItemClickListener onItemClickListener) {
         this.albumsList = albums;
         this.context = context;
+        this.onItemClickListener = onItemClickListener;
 
         Log.d(TAG, "AlbumAdapter: " + albums.size());
 
@@ -84,13 +92,27 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         if (holder instanceof AlbumViewHolder) {
             Album singleItem = albumsList.get(position);
             AlbumViewHolder albumViewHolder = (AlbumViewHolder) holder;
             albumViewHolder.tvUserID.setText(singleItem.getUserId());
             albumViewHolder.tvID.setText(singleItem.getId());
             albumViewHolder.tvTitle.setText(singleItem.getTitle());
+            albumViewHolder.cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onItemClickListener.OnItemClick(view,position);
+                }
+            });
+
+            albumViewHolder.cardView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    onItemClickListener.OnLongClick(view, position);
+                    return true;
+                }
+            });
         } else if (holder instanceof LoadingViewHolder) {
             LoadingViewHolder loadingViewHolder = (LoadingViewHolder) holder;
             loadingViewHolder.progressBar.setIndeterminate(true);
@@ -112,6 +134,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     static class AlbumViewHolder extends RecyclerView.ViewHolder {
+        CardView cardView;
         TextView tvUserID;
         TextView tvID;
         TextView tvTitle;
@@ -121,6 +144,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             tvUserID = itemView.findViewById(R.id.txt_userId);
             tvID = itemView.findViewById(R.id.txt_id);
             tvTitle = itemView.findViewById(R.id.txt_title);
+            cardView = itemView.findViewById(R.id.card_view_album);
         }
     }
 }
